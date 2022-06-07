@@ -5,10 +5,6 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
-
-  # switch orientation
-  auto_orientation: ^2.2.1
-
   cupertino_icons: ^1.0.2
 
   # pick video from file system
@@ -16,25 +12,25 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # listen to orientation
-  native_device_orientation: ^1.1.2
-
   # play videos
+  flutter_downloader: ^1.7.4
   video_player: ^2.4.2
-
-  # prevent screen from sleeping
-  wakelock: ^0.6.1+2
+  weather: ^2.0.1
 
 dev_dependencies:
+  flutter_bloc: ^8.0.1
   flutter_test:
     sdk: flutter
+  geolocator: ^8.2.1
   integration_test:
     sdk: flutter
-  marquee: ^2.2.2
+  marquee: ^2.2.1
+  nepali_utils: ^3.0.3
 
 flutter:
   uses-material-design: true
 
   assets:
     - assets/video.mp4
+    - assets/video1.mp4
     - assets/ntc.webp

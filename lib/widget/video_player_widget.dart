@@ -14,20 +14,32 @@ class VideoPlayerWidget extends StatelessWidget {
   Widget build(BuildContext context) =>
       controller != null && controller.value.isInitialized
           ? Container(alignment: Alignment.topCenter, child: buildVideo())
-          : Container(
-              height: 100,
-              child: Center(child: CircularProgressIndicator()),
-            );
+          : Center();
 
   Widget buildVideo() => Stack(
+        fit: StackFit.expand,
         children: <Widget>[
           buildVideoPlayer(),
-          Positioned.fill(child: BasicOverlayWidget(controller: controller)),
         ],
       );
 
-  Widget buildVideoPlayer() => AspectRatio(
-        aspectRatio: controller.value.aspectRatio,
-        child: VideoPlayer(controller),
+  Widget buildVideoPlayer() => buildFullScreen(
+        child: AspectRatio(
+          aspectRatio: controller.value.aspectRatio,
+          child: VideoPlayer(controller),
+        ),
       );
+
+  Widget buildFullScreen({
+    @required Widget child,
+  }) {
+    final size = controller.value.size;
+    final width = size?.width ?? 0;
+    final height = size?.height ?? 0;
+
+    return FittedBox(
+      fit: BoxFit.fill,
+      child: SizedBox(width: width, height: height, child: child),
+    );
+  }
 }

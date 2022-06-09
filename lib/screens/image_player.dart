@@ -1,8 +1,7 @@
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:video_example/constants/constants.dart';
-import 'package:video_example/model/video/video_data.dart';
+import 'package:video_example/model/video/Video_data.dart';
 
 class ImagePlayer extends StatelessWidget {
   const ImagePlayer({Key key}) : super(key: key);
@@ -13,7 +12,12 @@ class ImagePlayer extends StatelessWidget {
     return Container(
       height: size.height,
       width: size.width,
-      child: file_links[index].haveImage? Image.asset(file_links[index].image_link,fit: BoxFit.cover,):Container(),
+      child: VideoData[index].haveImage
+          ? Image.asset(
+              VideoData[index].image_link,
+              fit: BoxFit.cover,
+            )
+          : Container(),
     );
   }
 }

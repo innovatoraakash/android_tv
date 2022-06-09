@@ -1,19 +1,30 @@
-// import 'dart:ffi';
-// import 'dart:js';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
-import 'package:video_example/constants/constants.dart';
+
 import 'package:video_example/cubit/cubit/image_cubit.dart';
-import 'package:video_example/widget/image_player.dart';
+import 'package:video_example/database/temp_database.dart';
+import 'package:video_example/screens/image_player.dart';
+import 'package:video_example/service/file_downloader.dart';
+import 'package:video_example/service/permission_handler.dart';
 import '/cubit/cubit/notice_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '/widget/basic_overlay_widget.dart';
-import '/widget/basics/file_player_widget.dart';
+import 'screens/file_player.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
+
 
 bool L_shape_add = false;
-void main() => runApp(MyApp(
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   
-));
+  // Plugin must be initialized before using
+  await FlutterDownloader.initialize(
+      ignoreSsl:
+          true // option: set to false to disable working with http links (default: false)
+      );
+
+  runApp(MyApp());
+}
 
 class MyApp extends StatefulWidget {
   @override
@@ -21,7 +32,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  @override
   @override
   Widget build(BuildContext context) => BlocProvider(
         create: (context) => NoticeCubit(),
@@ -51,8 +61,9 @@ class _MainPageState extends State<MainPage> {
   int index = 0;
   void initState() {
     super.initState();
-    
+
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
+    PermissionHandle();
   }
 
   @override
@@ -70,25 +81,12 @@ class _MainPageState extends State<MainPage> {
               );
             },
           ),
-          BasicOverlayWidget()
+          BasicOverlayWidget(),
+
+          // Download(),
+          // TestDatabase()
         ],
       ),
-
-      // Row(
-      //   children: [
-      //     Visibility(child: Container(width: size.width*0.2,),visible: L_shape_add, replacement : const SizedBox.shrink(),),
-      //     Column(
-      //       children: [
-      //         Expanded(
-      //           child: Stack(
-      //             children: [FilePlayerWidget(), BasicOverlayWidget()],
-      //           ),
-      //         ),
-      //         Visibility(child: Container(height: size.height*0.2, width: size.width*0.8,),visible: L_shape_add,)
-      //       ],
-      //     ),
-      //   ],
-      // ),
     );
   }
 }

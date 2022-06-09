@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:video_example/widget/basic_overlay_widget.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPlayerWidget extends StatelessWidget {

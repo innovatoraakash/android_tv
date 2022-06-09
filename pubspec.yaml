@@ -7,13 +7,12 @@ environment:
 dependencies:
   cupertino_icons: ^1.0.2
 
-  # pick video from file system
-  file_picker: ^4.6.0
   flutter:
     sdk: flutter
 
   # play videos
   flutter_downloader: ^1.7.4
+  sqflite: ^2.0.2+1
   video_player: ^2.4.2
   weather: ^2.0.1
 
@@ -26,6 +25,9 @@ dev_dependencies:
     sdk: flutter
   marquee: ^2.2.1
   nepali_utils: ^3.0.3
+  path_provider: ^2.0.11
+  permission_handler: ^9.2.0
+  
 
 flutter:
   uses-material-design: true

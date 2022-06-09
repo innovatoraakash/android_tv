@@ -4,7 +4,7 @@ part of 'notice_cubit.dart';
   int index=0;
   NoticeState(this.index);
 
-    @override
+    
   int get props => index;
   
 }

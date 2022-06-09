@@ -3,12 +3,16 @@ import 'package:video_example/constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:video_example/cubit/cubit/image_cubit.dart';
-import 'package:video_example/model/video/video_data.dart';
+import 'package:video_example/database/database.dart';
+// import 'package:video_example/model/video/VideoData.dart';
+import 'package:video_example/model/video/video_model.dart';
 import 'package:video_example/widget/video_player_widget.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:async';
 
 bool isended = false;
+final dbHelper = VideoDatabaseHelper.instance;
+List<VideoModel> videoData = [];
 
 class FilePlayerWidget extends StatefulWidget {
   @override
@@ -16,8 +20,8 @@ class FilePlayerWidget extends StatefulWidget {
 }
 
 class _FilePlayerWidgetState extends State<FilePlayerWidget> {
-  File file = File(file_links[index].file_link);
-  String asset = file_links[index].file_link;
+  // String asset = videodata[index].file_link;
+  File file;
   VideoPlayerController controller;
   Duration position;
   bool isEnd = true;
@@ -26,10 +30,22 @@ class _FilePlayerWidgetState extends State<FilePlayerWidget> {
   void initState() {
     super.initState();
 
+    fetchDatabase();
+  }
+
+  fetchDatabase() async {
+    final allRows = await dbHelper.queryAllRows(video_table).whenComplete(() {
+     
+    });
+    print('database${allRows.length}');
+    for (var row in allRows) {
+      videoData.add(VideoModel().toModel(row));
+    }
     playVideo();
   }
 
   void playVideo() {
+    file = File(videoData[index].file_link);
     // if (file.existsSync()) {
     isEnd = true;
     controller = VideoPlayerController.file(file)
@@ -44,25 +60,20 @@ class _FilePlayerWidgetState extends State<FilePlayerWidget> {
           // checking the duration and position every time
           // Video Completed//
 
-          print(
-              "controller value ${controller.value.position} ${controller.value.duration}");
           if (controller.value.duration == controller.value.position && isEnd) {
             setState(() {
               isEnd = false;
             });
-            if (file_links[index].haveImage == true) {
-              print("inside if");
+            if (videoData[index].haveImage == true) {
               context.read<ImageCubit>().togleImageView();
               Future.delayed(Duration(seconds: 10), () {
                 context.read<ImageCubit>().togleImageView();
               }).whenComplete(() {
-                print("inside complete");
                 controller.dispose();
 
                 PlayNext();
               });
             } else {
-              print("inside else");
               controller.dispose();
 
               PlayNext();
@@ -81,14 +92,14 @@ class _FilePlayerWidgetState extends State<FilePlayerWidget> {
     setState(() {
       index++;
 
-      if (file_links.length > index) {
-        // this.asset = file_links[index].file_link;
-        this.file = File(file_links[index].file_link);
+      if (videoData.length > index) {
+        // this.asset = videoData[index].file_link;
+        this.file = File(videoData[index].file_link);
         playVideo();
       } else {
         index = 0;
-        // this.asset = file_links[index].file_link;
-        this.file = File(file_links[index].file_link);
+        // this.asset = videoData[index].file_link;
+        this.file = File(videoData[index].file_link);
         playVideo();
       }
     });

@@ -67,6 +67,9 @@ class _MainPageState extends State<MainPage> {
 
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
     PermissionHandle();
+
+
+    //uncoment below database call at the 1st run to add model data in databse
     // _insert();
     // _insertNotice();
   }

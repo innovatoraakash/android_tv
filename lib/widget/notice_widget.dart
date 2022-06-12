@@ -1,16 +1,19 @@
-
-
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:video_example/constants/constants.dart';
 import 'package:video_example/cubit/cubit/notice_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:marquee/marquee.dart';
+// import 'package:marquee/marquee.dart';
+import 'package:async/async.dart';
+
+import 'package:marquee_widget/marquee_widget.dart';
 import 'package:video_example/model/marquee_model.dart';
+import 'package:video_example/model/notice_slider/notice_data.dart';
 import 'package:video_example/model/notice_slider/notice_model.dart';
 import 'dart:async';
 import 'package:video_example/database/database.dart';
+import 'package:video_example/widget/marquee_widget.dart';
 
-int index = 0;
 PageController pageController;
 final dbHelper = VideoDatabaseHelper.instance;
 List<NoticeModel> notice_data = [];
@@ -25,60 +28,44 @@ class NoticeWIdget extends StatefulWidget {
 }
 
 class _NoticeWIdgetState extends State<NoticeWIdget> {
+  ScrollController scrollController;
+  int index = 0;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-   
 
-   //fetch data from database
+    //fetch data from database
     FetchDatabase();
-   
-    
-
-    // Timer.periodic(Duration(seconds: (notice_data[index].content.length ~/ 5)),
-    //     (timer) {
-    //   if (index < notice_data.length - 1) {
-    //     setState(() {
-    //       index++;
-    //     });
-    //   } else
-    //     (index = 0);
-    //   print("into timer${index}");
-    //   setState(() {
-    //     pageController.animateToPage(index,
-    //         duration: Duration(seconds: 1), curve: Curves.easeIn);
-    //   });
-    // });
-
-    
   }
 
   FetchDatabase() async {
-    final allRows = await dbHelper.queryAllRows(notice_table).whenComplete(() {
-      
-    });
+    final allRows =
+        await dbHelper.queryAllRows(notice_table).whenComplete(() {});
     print('database${allRows}');
     for (var row in allRows) {
       notice_data.add(NoticeModel().toModel(row));
     }
 
-     //generate list of marque for notice
+    //generate list of marque for notice
     ListGenerator();
 
     CheckTargetedTime();
   }
 
   void CheckTargetedTime() {
+    timerForNext();
     Timer.periodic(Duration(minutes: 1), (timer) {
       for (var noticeData in notice_data) {
         if (noticeData.targeted_time != null) {
           var difference_time =
               noticeData.targeted_time.difference(DateTime.now()).inMinutes;
-          if (difference_time == -16) {
+          if (difference_time == 0) {
             print("inside mesh");
             MarqueeModel targeted_marquee = MarqueeModel(
-                marquee: marquee(noticeData), title: noticeData.title);
+                marquee: marquee(noticeData),
+                title: noticeData.title,
+                content: noticeData.content);
 
             setState(() {
               pageBody = [];
@@ -96,6 +83,33 @@ class _NoticeWIdgetState extends State<NoticeWIdget> {
     });
   }
 
+  void timerForNext() {
+    Timer(
+        Duration(
+            seconds: (pageBody[this.index].content.length * 0.0285).floor() +
+                2), () {
+      // scrollController = ScrollController(initialScrollOffset: 50.0);
+      if (this.index < (pageBody.length - 1)) {
+        setState(() {
+          this.index++;
+        });
+      } else {
+        this.index = 0;
+      }
+
+      print("into timer${this.index}");
+      setState(() {
+        // pageController.jumpToPage(3);
+        // pageController.animateToPage(index,
+        //     duration: Duration(seconds: 1), curve: Curves.easeIn);
+      });
+
+      print("cancel timer");
+      // scrollController.dispose();
+      timerForNext();
+    });
+  }
+
   void ListGenerator() {
     final dateNow = DateTime.now();
 
@@ -104,33 +118,66 @@ class _NoticeWIdgetState extends State<NoticeWIdget> {
           dateNow.isBefore(noticeData.end_on)) {
         print("here in");
         pageBody.add(MarqueeModel(
-            marquee: Marquee(
-              style: TextStyle(fontSize: MediaQuery.of(context).size.height*0.022),
-              text: noticeData.content != ""
-                  ? noticeData.content
-                  : "Nepal Telecome",
-              numberOfRounds: 1,
-              pauseAfterRound: Duration(seconds: 10),
-              velocity: 20,
-              onDone: () {
-                print("newskoindex ");
-              },
+            marquee:
+                //  MarqueeWidget(
+                //   key: Key(index.toString()),
+                //   scrollController: ScrollController(),
+                //   animationDuration:
+                //       Duration(seconds: (noticeData.content.length * 0.05).floor()),
+                //   child: Text(
+                //     noticeData.content != ""
+                //         ? noticeData.content
+                //         : "Nepal Telecome",
+                //     style: TextStyle(
+                //         fontSize: MediaQuery.of(context).size.height * 0.025),
+                //   ),
+                // ),
+
+                Marquee(
+              backDuration: Duration(seconds: 0),
+              pauseDuration: Duration(seconds: 1),
+              autoRepeat: false,
+              forwardAnimation: Curves.linear,
+              animationDuration: Duration(
+                  seconds: (noticeData.content.length * 0.023).floor()),
+              directionMarguee: DirectionMarguee.oneDirection,
+              child: Text(
+                noticeData.content != ""
+                    ? noticeData.content
+                    : "Nepal Telecome",
+                style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.height * 0.025),
+              ),
+
+              //   style: TextStyle(
+              //       fontSize: MediaQuery.of(context).size.height * 0.025),
+              //   text: noticeData.content != ""
+              //       ? "                    " + noticeData.content
+              //       : "Nepal Telecome",
+              //   numberOfRounds: 1,
+
+              //   velocity: 20,
+              //   onDone: () {
+              //     print("newskoindex ");
+              //   },
+              //   startPadding: 0,
             ),
-            title: noticeData.title));
+            title: noticeData.title,
+            content: noticeData.content));
       }
     }
   }
 
   Widget marquee(NoticeModel noticeData) {
     return Marquee(
-      text: noticeData.content != "" ? noticeData.content : "Nepal Telecome",
-      numberOfRounds: 1,
-      pauseAfterRound: Duration(seconds: 10),
-      velocity: 20,
-      onDone: () {
-        print("newskoindex ");
-      },
-    );
+        // text: noticeData.content != "" ? noticeData.content : "Nepal Telecome",
+        // numberOfRounds: 1,
+        // pauseAfterRound: Duration(seconds: 10),
+        // velocity: 20,
+        // onDone: () {
+        //   print("newskoindex ");
+        // },
+        );
   }
 
   @override
@@ -154,7 +201,13 @@ class _NoticeWIdgetState extends State<NoticeWIdget> {
                 height: size.height * 0.05,
                 child: ElevatedButton(
                   onPressed: () {},
-                  child: Center(child: pageBody.isNotEmpty? Text(pageBody[index].title,style:TextStyle(fontSize: size.height*0.033) ,):Container()),
+                  child: Center(
+                      child: pageBody.isNotEmpty
+                          ? Text(
+                              pageBody[index].title,
+                              style: TextStyle(fontSize: size.height * 0.033),
+                            )
+                          : Container()),
                   style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all<Color>(
                           Color.fromARGB(255, 169, 182, 200))),
@@ -162,23 +215,29 @@ class _NoticeWIdgetState extends State<NoticeWIdget> {
             Expanded(
               child: Container(
                   height: size.height * 0.048,
-                  color: Color.fromRGBO(33, 150, 243, 1).withOpacity(0.3),
-                  child: BlocBuilder<NoticeCubit, NoticeState>(
-                    builder: (context, state) {
-                      return
-                          // ScrollingText();
-                          PageView.builder(
-                        itemCount: pageBody.length,
-                        itemBuilder: (context, _index) {
-                          return pageBody[_index].marquee;
-                        },
-                        controller: pageController,
-                        onPageChanged: (int _index) {
-                          setState(() {
-                            index = _index;
-                          });
-                        },
-                      );
+                  color: Color.fromARGB(255, 62, 76, 88).withOpacity(0.5),
+                  child:
+                      // ScrollingText();
+
+                      //   CarouselSlider.builder(
+                      //     options: CarouselOptions(autoPlay: true),
+                      // itemCount: pageBody.length,
+                      // itemBuilder: (BuildContext context, int itemIndex,
+                      //         int pageViewIndex) =>
+                      //     Container(
+                      //   child: pageBody[itemIndex].marquee,
+                      // ),
+                      // );
+                      PageView.builder(
+                    itemCount: pageBody.length,
+                    itemBuilder: (context, _index) {
+                      return pageBody[index].marquee;
+                    },
+                    controller: pageController,
+                    onPageChanged: (int _index) {
+                      setState(() {
+                        index = _index;
+                      });
                     },
                   )),
             ),

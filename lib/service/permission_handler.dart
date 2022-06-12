@@ -1,12 +1,14 @@
 
+
+
 import 'package:permission_handler/permission_handler.dart';
 
 PermissionHandle() async {
   Map<Permission, PermissionStatus> statuses = await [
     Permission.location,
    
-    Permission.manageExternalStorage,
-    Permission.mediaLibrary
+   
+    Permission.storage
     //add more permission to request here.
   ].request();
 
@@ -15,7 +17,7 @@ PermissionHandle() async {
     print("Location permission is denied.");
   }
 
-  if (statuses[Permission.manageExternalStorage].isDenied) {
+  if (statuses[Permission.storage].isDenied) {
     print("media access denied");
   }
 

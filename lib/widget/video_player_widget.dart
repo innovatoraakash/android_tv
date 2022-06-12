@@ -37,7 +37,7 @@ class VideoPlayerWidget extends StatelessWidget {
     final height = size?.height ?? 0;
 
     return FittedBox(
-      fit: BoxFit.fill,
+      fit: BoxFit.contain,
       child: SizedBox(width: width, height: height, child: child),
     );
   }

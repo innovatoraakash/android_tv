@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:video_example/cubit/cubit/notice_cubit.dart';
 import 'package:video_example/model/notice_slider/notice_data.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 class ScrollingText extends StatefulWidget {
   const ScrollingText({
@@ -21,30 +22,28 @@ class _ScrollingTextState extends State<ScrollingText> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    pageBody = List<Widget>.generate(
-        NoticeData.length, (int index) => SinglePage(index));
+    // pageBody = List<Widget>.generate(
+    //     NoticeData.length, (int index) => SinglePage(index));
     _scrollController.addListener(_scrollListener);
-    WidgetsBinding.instance.addTimingsCallback((timeStamp) {
-      double maxScrollExtent1 = _scrollController.position.maxScrollExtent;
-
-      animateToMaxMin(maxScrollExtent1, 2, _scrollController);
-          // print("ended in 1");
-
-    });
+    animateToMaxMin(2, _scrollController);
+    // print("ended in 1");
   }
 
-  animateToMaxMin(
-      double direction, int seconds, ScrollController scrollController) {
-    scrollController
-        .animateTo(direction,
-            duration: Duration(seconds: seconds), curve: Curves.linear)
-        .then((value) {
-      // BlocProvider.of<NoticeCubit>(context).DataChanged();
-      // context.read<NoticeCubit>().DataChanged;
-      // direction = direction == max ? min : max;
-      // print("ended in 1");
-      // animateToMaxMin(direction, seconds, scrollController);
-    });
+  animateToMaxMin(int seconds, ScrollController scrollController) {
+    if (_scrollController.hasClients) {
+      scrollController
+          .animateTo(scrollController.position.maxScrollExtent,
+              duration: Duration(seconds: seconds), curve: Curves.linear)
+          .then((value) {
+        print("Ended---");
+
+        // BlocProvider.of<NoticeCubit>(context).DataChanged();
+        // context.read<NoticeCubit>().DataChanged;
+        // direction = direction == max ? min : max;
+        // print("ended in 1");
+        animateToMaxMin( seconds, scrollController);
+      });
+    }
     // print("ended in 1");
   }
 
@@ -61,6 +60,7 @@ class _ScrollingTextState extends State<ScrollingText> {
   }
 
   Widget SinglePage(int i) {
+    // _scrollController.dispose();
     return ListView.builder(
         controller: _scrollController,
         scrollDirection: Axis.horizontal,
@@ -75,7 +75,7 @@ class _ScrollingTextState extends State<ScrollingText> {
   }
 
   void _animateSlider(int _index) {
-        _scrollController.dispose();
+    _scrollController.dispose();
 
     // int nextPage = pageController.page.round() + 1;
 
@@ -98,12 +98,41 @@ class _ScrollingTextState extends State<ScrollingText> {
   Widget build(BuildContext context) {
     return BlocBuilder<NoticeCubit, NoticeState>(
       builder: (context, state) {
+        // return Container(
+        //   height: 50,
+        //   child: CarouselSlider.builder(
+        //     options: CarouselOptions(
+        //       autoPlay: true,
+        //     ),
+        //     itemCount: NoticeData.length,
+        //     itemBuilder:
+        //         (BuildContext context, int itemIndex, int pageViewIndex) =>
+        //             Container(child: SinglePage(itemIndex)),
+        //   ),
+        // );
         return Container(
           height: 50,
-          child: PageView(controller: pageController, children: pageBody,onPageChanged: (value){
-            
-          },),
+          child: PageView.builder(itemBuilder: ((context, index) {
+            return ListView.builder(
+                controller: _scrollController,
+                scrollDirection: Axis.horizontal,
+                shrinkWrap: true,
+                itemCount: NoticeData[index].content.split(" ").length,
+                itemBuilder: (context, _index) {
+                  return Container(
+                    margin: EdgeInsets.all(2),
+                    child: Text(NoticeData[index].content.split(" ")[_index]),
+                  );
+                });
+            ;
+          })),
         );
+        // PageView(
+
+        //   controller: pageController,
+        //   children: pageBody,
+        //   onPageChanged: (value) {},
+        // );
       },
     );
   }

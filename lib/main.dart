@@ -1,8 +1,12 @@
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:video_example/constants/constants.dart';
 
 import 'package:video_example/cubit/cubit/image_cubit.dart';
 import 'package:video_example/database/temp_database.dart';
+import 'package:video_example/model/notice_slider/notice_data.dart';
+import 'package:video_example/model/video/video_data.dart';
 import 'package:video_example/screens/image_player.dart';
 import 'package:video_example/service/file_downloader.dart';
 import 'package:video_example/service/permission_handler.dart';
@@ -12,11 +16,10 @@ import '/widget/basic_overlay_widget.dart';
 import 'screens/file_player.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 
-
 bool L_shape_add = false;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Plugin must be initialized before using
   await FlutterDownloader.initialize(
       ignoreSsl:
@@ -64,6 +67,22 @@ class _MainPageState extends State<MainPage> {
 
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
     PermissionHandle();
+    // _insert();
+    // _insertNotice();
+  }
+
+  void _insert() async {
+    for (var videodata in VideoData) {
+      final id = await dbHelper.insert(videodata.toMap(), video_table);
+      print('inserted row id: $id');
+    }
+  }
+
+  void _insertNotice() async {
+    for (var noticedata in NoticeData) {
+      final id = await dbHelper.insert(noticedata.toMap(), notice_table);
+      print('inserted row id: $id');
+    }
   }
 
   @override
@@ -82,7 +101,7 @@ class _MainPageState extends State<MainPage> {
             },
           ),
           BasicOverlayWidget(),
-
+       
           // Download(),
           // TestDatabase()
         ],

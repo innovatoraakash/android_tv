@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:video_example/cubit/cubit/image_cubit.dart';
 import 'package:video_example/database/database.dart';
+import 'package:video_example/model/logs_model.dart';
 // import 'package:video_example/model/video/VideoData.dart';
 import 'package:video_example/model/video/video_model.dart';
 import 'package:video_example/widget/video_player_widget.dart';
@@ -35,7 +36,7 @@ class _FilePlayerWidgetState extends State<FilePlayerWidget> {
 
   fetchDatabase() async {
     final allRows = await dbHelper.queryAllRows(video_table).whenComplete(() {
-     
+      Future.delayed(Duration(seconds: 1));
     });
     print('database${allRows.length}');
     for (var row in allRows) {
@@ -44,48 +45,77 @@ class _FilePlayerWidgetState extends State<FilePlayerWidget> {
     playVideo();
   }
 
-  void playVideo() {
+  Future<bool> CountQuery() async {
+    var log_count =
+        await dbHelper.queryRowCountWithId(log_table, videoData[index].id);
+    print('log_count :$log_count');
+    // return log_count;
+    if (log_count == videoData[index].day_count) {
+      return true;
+    } else
+      return false;
+  }
+
+  void playVideo() async {
+    // if(){
+   
+    bool played_count = await CountQuery();
+    // }
     file = File(videoData[index].file_link);
-    // if (file.existsSync()) {
-    isEnd = true;
-    controller = VideoPlayerController.file(file)
-      ..initialize().then((value) {
-        setState(() {
-          controller.play();
-        });
+    if (file.existsSync()&& !played_count) {
+      isEnd = true;
+      controller = VideoPlayerController.file(file)
+        ..initialize().then((value) {
+          setState(() {
+            controller.play();
+          });
 
-        controller.addListener(() {
-          //custom Listner
+          controller.addListener(() {
+            //custom Listner
 
-          // checking the duration and position every time
-          // Video Completed//
+            // checking the duration and position every time
+            // Video Completed//
 
-          if (controller.value.duration == controller.value.position && isEnd) {
-            setState(() {
-              isEnd = false;
-            });
-            if (videoData[index].haveImage == true) {
-              context.read<ImageCubit>().togleImageView();
-              Future.delayed(Duration(seconds: 10), () {
+            if (controller.value.duration == controller.value.position &&
+                isEnd) {
+              setState(() {
+                isEnd = false;
+              });
+              CreateLog("video");
+              //check if have trailing image
+              if (videoData[index].haveImage == true) {
                 context.read<ImageCubit>().togleImageView();
-              }).whenComplete(() {
+                  CreateLog("image");
+                Future.delayed(Duration(seconds: videoData[index].time_to_play_image ?? 10), () {
+                  context.read<ImageCubit>().togleImageView();
+                }).whenComplete(() {
+                  controller.dispose();
+                  PlayNext();
+                });
+              } else {
                 controller.dispose();
 
                 PlayNext();
-              });
-            } else {
-              controller.dispose();
-
-              PlayNext();
+              }
             }
-          }
-        });
-      })
-      ..setLooping(false);
-    // }
-    // else {
-    // PlayNext();
-    // }
+          });
+        })
+        ..setLooping(false);
+    } else {
+      PlayNext();
+    }
+  }
+
+  CreateLog(String _type) async {
+    var logs = LogsModel(
+            video_id: _type.toLowerCase()=="video" ? videoData[index].id : null,
+            is_played: true,
+            type: _type,
+            played_time: DateTime.now())
+        .toMap();
+    await dbHelper.insert(logs, log_table);
+    var log = await dbHelper.queryAllRows(log_table);
+    log.forEach(print);
   }
 
   void PlayNext() {

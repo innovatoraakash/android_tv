@@ -75,6 +75,13 @@ class TestDatabase extends StatelessWidget {
               ),
               onPressed: _deleteNotice,
             ),
+            ElevatedButton(
+              child: Text(
+                'delete log',
+                style: TextStyle(fontSize: 20),
+              ),
+              onPressed: _deleteLog,
+            ),
           ],
         ),
       ),
@@ -141,5 +148,11 @@ class TestDatabase extends StatelessWidget {
     final id = await dbHelper.queryRowCount(notice_table);
     final rowsDeleted = await dbHelper.delete(id, notice_table);
     print('deleted $rowsDeleted row(s): row $id');
+  }
+  void _deleteLog() async {
+    // Assuming that the number of rows is the id for the last row.
+    
+    final rowsDeleted = await dbHelper.deleteAll(log_table);
+    print('deleted $rowsDeleted row(s)');
   }
 }

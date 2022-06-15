@@ -2,7 +2,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:flutter/material.dart';
 import 'package:video_example/constants/constants.dart';
 import 'package:video_example/widget/notice_widget.dart';
-import 'package:video_example/widget/scrolling_text.dart';
 import 'text_overlay_widget.dart';
 import 'package:weather/weather.dart';
 import 'package:nepali_utils/nepali_utils.dart' as Nepali;

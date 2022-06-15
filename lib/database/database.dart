@@ -142,4 +142,8 @@ class VideoDatabaseHelper {
     Database db = await instance.database;
     return await db.delete(_table, where: '$columnId = ?', whereArgs: [id]);
   }
+  Future<int> deleteAll(String _table) async {
+    Database db = await instance.database;
+    return await db.delete(_table);
+  }
 }

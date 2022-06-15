@@ -36,20 +36,19 @@ Future<Position> determinePosition() async {
         'Location permissions are permanently denied, we cannot request permissions.');
   }
 
+  var currentLocation;
+  // print('get location called');
+  try {
+    currentLocation = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.medium);
 
-var currentLocation;
-    // print('get location called');
-    try {
-      currentLocation = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.medium);
-      
-      print("location1$currentLocation");
-    } catch (e) {
-      print("geoerror$e");
-      currentLocation = null;
-    }
-    // print('current location: '+currentLocation.toString());
-    return currentLocation;
+    print("location1$currentLocation");
+  } catch (e) {
+    print("geoerror$e");
+    currentLocation = null;
+  }
+  // print('current location: '+currentLocation.toString());
+  return currentLocation ?? Geolocator.getLastKnownPosition();
 
   // When we reach here, permissions are granted and we can
   // continue accessing the position of the device.

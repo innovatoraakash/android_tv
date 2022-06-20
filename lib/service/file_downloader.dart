@@ -5,10 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:path_provider/path_provider.dart';
 
-
-
-
-
 class Download extends StatefulWidget {
   Download({Key key, this.title}) : super(key: key);
   final String title;
@@ -33,17 +29,20 @@ class _MyHomePageState extends State<Download> {
     send.send([id, status, progress]);
   }
 
-   _downloadListener() {
-    IsolateNameServer.registerPortWithName(_port.sendPort, 'downloader_send_port');
+  _downloadListener() {
+    IsolateNameServer.registerPortWithName(
+        _port.sendPort, 'downloader_send_port');
     _port.listen((dynamic data) {
       String id = data[0];
       DownloadTaskStatus status = data[1];
       int progress = data[2];
-      if (status.toString() == "DownloadTaskStatus(3)" && progress == 100 && id != null) {
-          String query = "SELECT * FROM task WHERE task_id='" + id + "'";
-          var tasks = FlutterDownloader.loadTasksWithRawQuery(query: query);
-          //if the task exists, open it
-          if (tasks != null) FlutterDownloader.open(taskId: id);
+      if (status.toString() == "DownloadTaskStatus(3)" &&
+          progress == 100 &&
+          id != null) {
+        String query = "SELECT * FROM task WHERE task_id='" + id + "'";
+        var tasks = FlutterDownloader.loadTasksWithRawQuery(query: query);
+        //if the task exists, open it
+        if (tasks != null) FlutterDownloader.open(taskId: id);
       }
     });
     FlutterDownloader.registerCallback(downloadCallback);
@@ -80,12 +79,10 @@ class _MyHomePageState extends State<Download> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-          ],
+          children: <Widget>[],
         ),
       ),
       floatingActionButton: FloatingActionButton(

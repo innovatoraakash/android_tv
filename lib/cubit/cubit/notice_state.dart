@@ -1,10 +1,9 @@
 part of 'notice_cubit.dart';
 
- class NoticeState {
-  int index=0;
+class NoticeState {
+  int index = 0;
   NoticeState(this.index);
   int get props => index;
-  
 }
 
 // class NoticeInitial extends NoticeState {}

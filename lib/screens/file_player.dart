@@ -69,7 +69,7 @@ class _FilePlayerWidgetState extends State<FilePlayerWidget> {
       if (file.existsSync() && !played_count) {
         isEnd = true;
 
-        controller = new  VideoPlayerController.file(file)
+        controller = new VideoPlayerController.file(file)
           ..initialize().then((value) {
             setState(() {
               controller.play();
@@ -99,10 +99,14 @@ class _FilePlayerWidgetState extends State<FilePlayerWidget> {
                     context.read<ImageCubit>().togleImageView();
                   }).whenComplete(() {
                     controller.dispose();
+                    // controller.removeListener;
+                    // controller.pause();
+                    controller = null;
                     PlayNext();
                   });
                 } else {
                   controller.dispose();
+                  controller = null;
                   PlayNext();
                 }
               }
@@ -133,7 +137,7 @@ class _FilePlayerWidgetState extends State<FilePlayerWidget> {
   void PlayNext() {
     setState(() {
       index++;
-    
+
       if (videoData.length > index) {
         // this.asset = videoData[index].file_link;
         this.file = File(videoData[index].file_link);

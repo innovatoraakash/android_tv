@@ -7,7 +7,8 @@ class VideoModel {
       this.start_from,
       this.day_count,
       this.name,
-      this.id,this.time_to_play_image});
+      this.id,
+      this.time_to_play_image});
   int id;
   String name;
   String file_link;
@@ -27,7 +28,7 @@ class VideoModel {
       'start_from': start_from.toString(),
       'end_on': end_on.toString(),
       'day_count': day_count,
-      'time_to_play_image':time_to_play_image
+      'time_to_play_image': time_to_play_image
     };
   }
 
@@ -46,6 +47,6 @@ class VideoModel {
         start_from: DateTime.parse(database['start_from']),
         end_on: DateTime.parse(database['end_on']),
         day_count: database['day_count'],
-        time_to_play_image:database['time_to_play_image']);
+        time_to_play_image: database['time_to_play_image']);
   }
 }

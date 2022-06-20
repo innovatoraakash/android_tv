@@ -49,14 +49,14 @@ class TestDatabase extends StatelessWidget {
             ),
             ElevatedButton(
               child: Text(
-                'update video',
+                'insert item',
                 style: TextStyle(fontSize: 20),
               ),
               onPressed: _update,
             ),
             ElevatedButton(
               child: Text(
-                'update notice',
+                'query item',
                 style: TextStyle(fontSize: 20),
               ),
               onPressed: _updateNotice,
@@ -91,18 +91,23 @@ class TestDatabase extends StatelessWidget {
   // Button onPressed methods
 
   void _insert() async {
-    for(var videodata in VideoData){
-
-    final id = await dbHelper.insert(videodata.toMap(), video_table);
-    print('inserted row id: $id');
+    for (var videodata in VideoData) {
+      final id = await dbHelper.insert(videodata.toMap(), video_table);
+      print('inserted row id: $id');
     }
   }
 
   void _insertNotice() async {
-    for(var noticedata in NoticeData){
+    for (var noticedata in NoticeData) {
+      final id = await dbHelper.insert(noticedata.toMap(), notice_table);
+      print('inserted row id: $id');
+    }
+  }
 
-    final id = await dbHelper.insert(noticedata.toMap(), notice_table);
-    print('inserted row id: $id');
+  void _insertItem() async {
+    for (var noticedata in NoticeData) {
+      final id = await dbHelper.insert(noticedata.toMap(), notice_table);
+      print('inserted row id: $id');
     }
   }
 
@@ -149,9 +154,10 @@ class TestDatabase extends StatelessWidget {
     final rowsDeleted = await dbHelper.delete(id, notice_table);
     print('deleted $rowsDeleted row(s): row $id');
   }
+
   void _deleteLog() async {
     // Assuming that the number of rows is the id for the last row.
-    
+
     final rowsDeleted = await dbHelper.deleteAll(log_table);
     print('deleted $rowsDeleted row(s)');
   }

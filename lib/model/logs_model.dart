@@ -19,7 +19,7 @@ class LogsModel {
     return LogsModel(
         video_id: database['video_id'],
         is_played: database['is_played'] == 1 ? true : false,
-        played_time: DateTime.parse(database['played_time']) ,
+        played_time: DateTime.parse(database['played_time']),
         type: database['type']);
   }
 }

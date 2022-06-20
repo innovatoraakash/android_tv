@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:video_example/constants/constants.dart';
 import 'package:video_example/model/video/Video_data.dart';

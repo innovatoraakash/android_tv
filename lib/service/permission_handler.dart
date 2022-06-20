@@ -1,13 +1,9 @@
-
-
-
 import 'package:permission_handler/permission_handler.dart';
 
 PermissionHandle() async {
   Map<Permission, PermissionStatus> statuses = await [
     Permission.location,
-   
-   
+
     Permission.storage
     //add more permission to request here.
   ].request();

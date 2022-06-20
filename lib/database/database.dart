@@ -11,6 +11,7 @@ class VideoDatabaseHelper {
 
   static final columnId = '_id';
 
+  static final id = 'id';
   static final name = 'name';
   static final file_link = 'file_link';
   static final start_from = 'start_from';
@@ -19,7 +20,9 @@ class VideoDatabaseHelper {
   static final have_image = 'have_image';
   static final day_count = 'day_count';
   static final time_to_play_image = 'time_to_play_image';
-  
+  static final hold = 'hold';
+  static final type = 'type';
+  static final status = 'status';
 
   static final title = 'title';
   static final content = 'content';
@@ -27,7 +30,6 @@ class VideoDatabaseHelper {
 
   static final log_table = 'log_table';
   static final video_id = 'video_id';
-  static final type = 'type';
   static final is_played = 'is_played';
   static final played_time = 'played_time';
 
@@ -67,6 +69,19 @@ class VideoDatabaseHelper {
             $have_image BOOLEAN NOT NULL,
             $time_to_play_image INTEGER
            
+          )
+          ''');
+    await db.execute('''
+          CREATE TABLE $item_table (
+            $name TEXT ,
+            $id INTEGER PRIMARY KEY,
+            $day_count INTEGER NOT NULL,
+            $file_link TEXT NOT NULL,
+            $start_from DATETIME NOT NULL,
+            $end_on DATETIME NOT NULL,
+            $image_link TEXT ,
+            $hold INTEGER,
+            $status BOOL
           )
           ''');
 
@@ -142,6 +157,7 @@ class VideoDatabaseHelper {
     Database db = await instance.database;
     return await db.delete(_table, where: '$columnId = ?', whereArgs: [id]);
   }
+
   Future<int> deleteAll(String _table) async {
     Database db = await instance.database;
     return await db.delete(_table);

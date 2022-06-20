@@ -56,7 +56,6 @@ class _NoticeWIdgetState extends State<NoticeWIdget> {
           var difference_time =
               noticeData.targeted_time.difference(DateTime.now()).inMinutes;
           if (difference_time == 0) {
-            print("inside mesh");
             MarqueeModel targeted_marquee = MarqueeModel(
                 marquee: marquee(noticeData),
                 title: noticeData.title,
@@ -67,7 +66,7 @@ class _NoticeWIdgetState extends State<NoticeWIdget> {
               pageBody.add(targeted_marquee);
             });
 
-            Timer(Duration(seconds: 30), () {
+            Timer(Duration(seconds: 60), () {
               pageBody = [];
               ListGenerator();
               setState(() {});
@@ -87,9 +86,7 @@ class _NoticeWIdgetState extends State<NoticeWIdget> {
       this.index = 0;
     }
 
-    setState(() {
-    });
-
+    setState(() {});
   }
 
   void ListGenerator() {
@@ -168,8 +165,7 @@ class _NoticeWIdgetState extends State<NoticeWIdget> {
               child: Container(
                   height: size.height * 0.048,
                   color: Color.fromARGB(255, 62, 76, 88).withOpacity(0.5),
-                  child:
-                      PageView.builder(
+                  child: PageView.builder(
                     itemCount: pageBody.length,
                     itemBuilder: (context, _index) {
                       return pageBody[index].marquee;

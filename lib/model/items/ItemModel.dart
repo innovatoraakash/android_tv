@@ -37,13 +37,11 @@ class ItemModel {
     this.file,
     this.follow,
     this.hold,
-   
     this.repeatNo,
     this.startDate,
     this.endDate,
     this.type,
     this.status,
-    
   });
 
   ItemModel fromJson(dynamic json) {
@@ -53,14 +51,25 @@ class ItemModel {
       file: json['file'],
       follow: json['follow'],
       hold: json['hold'],
-   
       repeatNo: json['repeat_no'],
       startDate: json['start_date'],
       endDate: json['end_date'],
       type: json['type'],
       status: json['status'],
-
     );
+  }
+
+  ItemModel toModel(var database) {
+    return ItemModel(
+        id: database["columnId"].toString(),
+        name: database["name"],
+        file: database["file"],
+        startDate: database["start_date"],
+        endDate: database["end_date"],
+        follow: database["follow"],
+        hold: database["hold"].toString(),
+        repeatNo: database["day_count"].toString(),
+        status: database["status"].toString());
   }
 
   String id;
@@ -68,28 +77,25 @@ class ItemModel {
   String file;
   dynamic follow;
   String hold;
- 
+
   String repeatNo;
   String startDate;
   String endDate;
   String type;
   String status;
- 
-
 
   Map<String, dynamic> toMap() => {
-        'id': id,
+        'columnId': id,
         'name': name,
-        'file_link': file,
-        'image_link': follow,
+        'file': file,
+        'follow': follow,
         'hold': hold,
         'day_count': repeatNo,
-        'start_from': startDate,
-        'end_on': endDate,
+        'start_date': startDate,
+        'end_date': endDate,
         'status': status,
-      
       };
-      
+
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['id'] = id;
@@ -97,13 +103,13 @@ class ItemModel {
     map['file'] = file;
     map['follow'] = follow;
     map['hold'] = hold;
-   
+
     map['repeat_no'] = repeatNo;
     map['start_date'] = startDate;
     map['end_date'] = endDate;
     map['type'] = type;
     map['status'] = status;
- 
+
     return map;
   }
 }

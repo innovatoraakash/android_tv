@@ -10,6 +10,8 @@ import 'package:video_example/model/video/video_model.dart';
 import 'package:video_example/widget/video_player_widget.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:async';
+import 'package:downloads_path_provider_28/downloads_path_provider_28.dart';
+
 
 bool isended = false;
 final dbHelper = VideoDatabaseHelper.instance;
@@ -45,6 +47,8 @@ class _FilePlayerWidgetState extends State<FilePlayerWidget> {
     playVideo();
   }
 
+  
+
   Future<bool> CountQuery() async {
     var log_count =
         await dbHelper.queryRowCountWithId(log_table, videoData[index].id);
@@ -56,20 +60,24 @@ class _FilePlayerWidgetState extends State<FilePlayerWidget> {
     } else
       return false;
   }
+   
 
   void playVideo() async {
+  Directory downloadsDirectory =
+        await DownloadsPathProvider.downloadsDirectory;
+
+//  downloadsDirectory.path +"/hello.mp4"
+   
+    
     if (DateTime.now().isAfter(videoData[index].start_from) &&
         DateTime.now().isBefore(videoData[index].end_on)) {
       bool played_count = await CountQuery().whenComplete(() {
-        // print("count completed${DateTime.now()}");
       });
-      // }
-      // print(("count comp value${DateTime.now()}  $played_count"));
       file = File(videoData[index].file_link);
       if (file.existsSync() && !played_count) {
         isEnd = true;
 
-        controller = new VideoPlayerController.file(file)
+        controller = new VideoPlayerController.file(File(videoData[index].file_link))
           ..initialize().then((value) {
             setState(() {
               controller.play();
@@ -80,7 +88,6 @@ class _FilePlayerWidgetState extends State<FilePlayerWidget> {
 
               // checking the duration and position every time
               // Video Completed//
-
               if (controller.value.duration == controller.value.position &&
                   isEnd) {
                 setState(() {
@@ -135,10 +142,10 @@ class _FilePlayerWidgetState extends State<FilePlayerWidget> {
   }
 
   void PlayNext() {
-    setState(() {
-      index++;
+    
 
       if (videoData.length > index) {
+      index++;
         // this.asset = videoData[index].file_link;
         this.file = File(videoData[index].file_link);
         playVideo();
@@ -148,7 +155,7 @@ class _FilePlayerWidgetState extends State<FilePlayerWidget> {
         this.file = File(videoData[index].file_link);
         playVideo();
       }
-    });
+  setState(() { });
   }
 
   @override

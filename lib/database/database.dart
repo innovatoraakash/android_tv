@@ -73,15 +73,15 @@ class VideoDatabaseHelper {
           ''');
     await db.execute('''
           CREATE TABLE $item_table (
-            $name TEXT ,
-            $id INTEGER PRIMARY KEY,
-            $day_count INTEGER NOT NULL,
-            $file_link TEXT NOT NULL,
-            $start_from DATETIME NOT NULL,
-            $end_on DATETIME NOT NULL,
-            $image_link TEXT ,
-            $hold INTEGER,
-            $status BOOL
+            name TEXT ,
+            columnId INTEGER PRIMARY KEY,
+            day_count INTEGER NOT NULL,
+            file TEXT NOT NULL,
+            start_date DATETIME NOT NULL,
+            end_date DATETIME NOT NULL,
+            follow TEXT ,
+            hold INTEGER,
+            status BOOL
           )
           ''');
 

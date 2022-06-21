@@ -4,6 +4,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:video_example/constants/constants.dart';
+import 'package:video_example/model/items/ItemModel.dart';
+import 'package:video_example/model/items/item_data.dart';
+import 'package:video_example/service/database_fetch.dart';
+import 'package:downloads_path_provider_28/downloads_path_provider_28.dart';
+
+
+List<String> links = [];
 
 class Download extends StatefulWidget {
   Download({Key key, this.title}) : super(key: key);
@@ -19,8 +27,33 @@ class _MyHomePageState extends State<Download> {
   @override
   void initState() {
     super.initState();
+    // FetchItems();
+    Future.delayed(Duration(seconds: 1));
+    for (ItemModel item in ItemData) {
+      print("items link${item.file}");
+      links.add(item.file);
+    }
+    initialOption();
     _downloadListener();
   }
+
+  initialOption() async {
+    // await FetchItems();
+    Future.delayed(Duration(seconds: 1));
+    for (ItemModel item in ItemData) {
+      print("items link${item.file}");
+      links.add(item.file);
+    }
+  }
+
+  // FetchItems() async {
+  //   final allRows = await dbHelper.queryAllRows(item_table).whenComplete(() {});
+  //   print('database${allRows.length}');
+  //   for (var row in allRows) {
+  //     print("rows$row");
+  //     ItemData.add(ItemModel().toModel(row));
+  //   }
+  // }
 
   static void downloadCallback(
       String id, DownloadTaskStatus status, int progress) {
@@ -49,22 +82,24 @@ class _MyHomePageState extends State<Download> {
   }
 
   void _download() async {
-    String _localPath =
-        (await findLocalPath()) + Platform.pathSeparator + 'Example_Downloads';
 
-    final savedDir = Directory(_localPath);
-    bool hasExisted = await savedDir.exists();
-    if (!hasExisted) {
-      savedDir.create();
-    }
-    String _url =
-        "https://www.colonialkc.org/wp-content/uploads/2015/07/Placeholder.png";
-    final download = await FlutterDownloader.enqueue(
-      url: _url,
-      savedDir: _localPath,
-      showNotification: true,
-      openFileFromNotification: true,
-    );
+
+    Directory downloadsDirectory =
+        await DownloadsPathProvider.downloadsDirectory;
+    
+    String _url = 
+      "https://firebasestorage.googleapis.com/v0/b/storage-3cff8.appspot.com/o/2020-05-29%2007-18-34.mp4?alt=media&token=841fffde-2b83-430c-87c3-2d2fd658fd41"
+    ;
+
+    // ItemData.forEach((element) async {
+      final download = await FlutterDownloader.enqueue(
+        url: _url,
+        savedDir: downloadsDirectory.path,
+        showNotification: true,
+        openFileFromNotification: true,
+        fileName: "elementname",
+      );
+    // });
   }
 
   Future<String> findLocalPath() async {

@@ -7,20 +7,26 @@ import 'package:video_example/cubit/cubit/image_cubit.dart';
 import 'package:video_example/database/realtime_database.dart';
 import 'package:video_example/database/temp_database.dart';
 import 'package:video_example/model/items/ItemModel.dart';
+import 'package:video_example/model/items/item_data.dart';
 import 'package:video_example/model/notice_slider/notice_data.dart';
 import 'package:video_example/model/video/video_data.dart';
 import 'package:video_example/screens/image_player.dart';
 import 'package:video_example/service/api_service.dart';
+import 'package:video_example/service/database_fetch.dart';
 import 'package:video_example/service/file_downloader.dart';
 import 'package:video_example/service/permission_handler.dart';
+import 'package:video_example/widget/l_banner.dart';
 import '/cubit/cubit/notice_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '/widget/basic_overlay_widget.dart';
 import 'screens/file_player.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:video_example/database/database.dart';
 
 bool L_shape_add = false;
+final dbHelper = VideoDatabaseHelper.instance;
+
 String testset;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,6 +34,7 @@ void main() async {
 
   // Plugin must be initialized before using
   await FlutterDownloader.initialize(
+    debug:true,
       ignoreSsl:
           true // option: set to false to disable working with http links (default: false)
       );
@@ -70,16 +77,29 @@ class _MainPageState extends State<MainPage> {
   int index = 0;
   void initState() {
     super.initState();
-    setState(() {
-      testset = firefire();
-    });
+    // setState(() {
+    //   testset = firebaseListner();
+    // });
 
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
     PermissionHandle();
+    // InitialFirebaseFetch();
     fetchInitialData();
+    // FetchItems();
+
     //uncoment below database call at the 1st run to add model data in databse
-    // _insert();
-    // _insertNotice();
+    _insert();
+    _insertNotice();
+  }
+
+  FetchItems() async {
+    print("khoi data");
+    final allRows = await dbHelper.queryAllRows(item_table).whenComplete(() {});
+    print('database${allRows.length}');
+    for (var row in allRows) {
+      print("rows$row");
+      ItemData.add(ItemModel().toModel(row));
+    }
   }
 
   fetchInitialData() async {
@@ -114,28 +134,26 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Scaffold(
-      body: Stack(
-        children: [
-          FilePlayerWidget(),
-          BlocBuilder<ImageCubit, bool>(
-            builder: (context, state) {
-              return Visibility(
-                child: ImagePlayer(),
-                visible: state,
-              );
-            },
-          ),
-          BasicOverlayWidget(),
-          Center(child: Text(testset ?? "hello"))
+      body: LBanner(
+        size: size,
+        child: Stack(
+          children: [
+            FilePlayerWidget(),
+            // BlocBuilder<ImageCubit, bool>(
+            //   builder: (context, state) {
+            //     return Visibility(
+            //       child: ImagePlayer(),
+            //       visible: state,
+            //     );
+            //   },
+            // ),
+            // BasicOverlayWidget(),
 
-          // Download(),
-          // TestDatabase()
-        ],
+            Download(),
+            // TestDatabase()
+          ],
+        ),
       ),
     );
   }
 }
-
-
-
-

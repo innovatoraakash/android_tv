@@ -19,6 +19,7 @@ dependencies:
   weather: ^2.0.1
 
 dev_dependencies:
+  downloads_path_provider_28: ^0.1.2
   firebase_core: ^1.17.1
   firebase_database: ^9.0.15
   flutter_bloc: ^8.0.1
